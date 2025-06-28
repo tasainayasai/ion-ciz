@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>イオンクイズ</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 30px;
+      text-align: center;
+      background-color: #f0f0f0;
+    }
+    #question-box {
+      font-size: 1.5em;
+      background: white;
+      padding: 20px;
+      margin: 20px auto;
+      width: 80%;
+      max-width: 500px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    #next-btn {
+      margin-top: 20px;
+      font-size: 1em;
+      padding: 10px 20px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>イオンクイズ</h1>
+<p>イオンの名前を見て、式を思い出そう！クリックで答えが出るよ。</p>
+
+<div id="question-box" onclick="revealAnswer()">ここをクリックしてスタート</div>
+<button id="next-btn" onclick="nextQuestion()">次の問題</button>
+
+<script>
+  const ions = [
+    { name: "水素イオン", formula: "H⁺" },
+    { name: "ナトリウムイオン", formula: "Na⁺" },
+    { name: "カリウムイオン", formula: "K⁺" },
+    { name: "銀イオン", formula: "Ag⁺" },
+    { name: "アンモニウムイオン", formula: "NH₄⁺" },
+    { name: "カルシウムイオン", formula: "Ca²⁺" },
+    { name: "銅イオン", formula: "Cu²⁺" },
+    { name: "塩化物イオン", formula: "Cl⁻" },
+    { name: "水酸化物イオン", formula: "OH⁻" },
+    { name: "硫酸イオン", formula: "SO₄²⁻" },
+    { name: "炭酸イオン", formula: "CO₃²⁻" }
+  ];
+
+  let currentIon = null;
+  let showingAnswer = false;
+
+  function nextQuestion() {
+    showingAnswer = false;
+    const randomIndex = Math.floor(Math.random() * ions.length);
+    currentIon = ions[randomIndex];
+    document.getElementById("question-box").textContent = currentIon.name;
+  }
+
+  function revealAnswer() {
+    if (currentIon && !showingAnswer) {
+      document.getElementById("question-box").textContent = `${currentIon.name} → ${currentIon.formula}`;
+      showingAnswer = true;
+    }
+  }
+
+  // 初期表示
+  nextQuestion();
+</script>
+
+</body>
+</html>
