@@ -21,14 +21,22 @@
       border-radius: 10px;
       cursor: pointer;
     }
-    #next-btn {
+    #next-btn, #reset-btn {
       margin-top: 20px;
       font-size: 1em;
       padding: 10px 20px;
     }
 
-    p{
+    p {
       font-size: 1.5em;
+    }
+
+    .check-btn {
+      margin-left: 20px;
+      font-size: 1.5em;
+      background: none;
+      border: none;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -37,15 +45,17 @@
 <h1>漢字クイズ</h1>
 <p>漢字を見て、式を思い出そう！クリックで答えが出るよ。</p>
 
-<div id="question-box" onclick="revealAnswer()">ここをクリックしてスタート</div>
+<div id="question-box">ここをクリックしてスタート</div>
 <button id="next-btn" onclick="nextQuestion()">次の問題</button>
+<a href="index.html"><button>イオンモード</button></a>
 
-  <a href="index.html"><p>イオンモード</p></a>
+<!-- チェックリセットボタン -->
+<button id="reset-btn" onclick="resetAllChecks()">すべてリセット</button>
 
 <script>
   const ions = [
     { name: "いましめる", formula: "戒める" },
-    { name: "(やっかい)な問題", formula: "厄介" },
+    { name: "そしょう", formula: "訴訟" },
     { name: "おだやか", formula: "穏やか" },
     { name: "(けいこう)午後", formula: "鶏口" },
     { name: "とくそく", formula: "督促" },
@@ -88,7 +98,6 @@
     { name: "よい", formula: "宵" },
     { name: "たき", formula: "滝" },
     { name: "(さいけん)の回収", formula: "債権" },
-    { name: "そしょう", formula: "訴訟" },
     { name: "いんぺい", formula: "隠蔽" },
     { name: "おろしうり", formula: "卸売り" },
     { name: "おもむき", formula: "趣" },
@@ -100,7 +109,7 @@
     { name: "しげる", formula: "茂る" }
   ];
 
- let currentIon = null;
+  let currentIon = null;
   let showingAnswer = false;
 
   // ローカルストレージから状態を取得（前回のチェック状態）
@@ -116,7 +125,7 @@
 
     document.getElementById("question-box").innerHTML = `
       <span id="question-text">${currentIon.name}</span>
-      <button id="check-btn" onclick="markAsChecked(event)" ${isChecked ? 'disabled' : ''}>
+      <button class="check-btn" onclick="toggleCheck(event)">
         ${isChecked ? '✅' : '☐'}
       </button>
     `;
@@ -126,21 +135,45 @@
     if (currentIon && !showingAnswer) {
       document.getElementById("question-box").innerHTML = `
         <span id="question-text">${currentIon.name} → ${currentIon.formula}</span>
-        <button id="check-btn" onclick="markAsChecked(event)">☐</button>
+        <button class="check-btn" onclick="toggleCheck(event)">☐</button>
       `;
       showingAnswer = true;
     }
   }
 
-  function markAsChecked(event) {
+  // チェックボタンの状態をトグル（チェックと消去）
+  function toggleCheck(event) {
     const btn = event.target;
-    // チェックを入れる
-    btn.textContent = "✅";
-    btn.disabled = true;
+    const isChecked = btn.textContent === '✅';
 
-    // ローカルストレージに状態を保存
-    checkedState[currentIon.name] = true;
+    if (isChecked) {
+      // チェックを外す処理
+      btn.textContent = '☐'; // チェックを外す
+      checkedState[currentIon.name] = false; // ローカルストレージから削除
+    } else {
+      // チェックを入れる処理
+      btn.textContent = '✅'; // チェックを入れる
+      checkedState[currentIon.name] = true; // ローカルストレージに保存
+    }
+
+    // ローカルストレージに更新した状態を保存
     localStorage.setItem('checkedState', JSON.stringify(checkedState));
+  }
+
+  // すべてのチェックマークをリセット
+  function resetAllChecks() {
+    // すべてのチェック状態を削除
+    Object.keys(checkedState).forEach(key => {
+      checkedState[key] = false;
+    });
+    
+    // ローカルストレージにリセットした状態を保存
+    localStorage.setItem('checkedState', JSON.stringify(checkedState));
+
+    // すべての問題のチェック状態をリセット
+    document.querySelectorAll('.check-btn').forEach(btn => {
+      btn.textContent = '☐'; // すべてのチェックを外す
+    });
   }
 
   // 初期表示
