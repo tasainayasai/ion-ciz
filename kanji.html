@@ -103,13 +103,22 @@
  let currentIon = null;
   let showingAnswer = false;
 
+  // ローカルストレージから状態を取得（前回のチェック状態）
+  const checkedState = JSON.parse(localStorage.getItem('checkedState')) || {};
+
   function nextQuestion() {
     showingAnswer = false;
     const randomIndex = Math.floor(Math.random() * ions.length);
     currentIon = ions[randomIndex];
+
+    // チェック状態をロードして表示
+    const isChecked = checkedState[currentIon.name] || false;
+
     document.getElementById("question-box").innerHTML = `
       <span id="question-text">${currentIon.name}</span>
-      <button id="check-btn" onclick="markAsChecked(event)">☐</button>
+      <button id="check-btn" onclick="markAsChecked(event)" ${isChecked ? 'disabled' : ''}>
+        ${isChecked ? '✅' : '☐'}
+      </button>
     `;
   }
 
@@ -125,10 +134,16 @@
 
   function markAsChecked(event) {
     const btn = event.target;
+    // チェックを入れる
     btn.textContent = "✅";
     btn.disabled = true;
+
+    // ローカルストレージに状態を保存
+    checkedState[currentIon.name] = true;
+    localStorage.setItem('checkedState', JSON.stringify(checkedState));
   }
 
+  // 初期表示
   nextQuestion();
 </script>
 
