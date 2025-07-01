@@ -100,24 +100,35 @@
     { name: "しげる", formula: "茂る" }
   ];
 
-  let currentIon = null;
+ let currentIon = null;
   let showingAnswer = false;
 
   function nextQuestion() {
     showingAnswer = false;
     const randomIndex = Math.floor(Math.random() * ions.length);
     currentIon = ions[randomIndex];
-    document.getElementById("question-box").textContent = currentIon.name;
+    document.getElementById("question-box").innerHTML = `
+      <span id="question-text">${currentIon.name}</span>
+      <button id="check-btn" onclick="markAsChecked(event)">☐</button>
+    `;
   }
 
   function revealAnswer() {
     if (currentIon && !showingAnswer) {
-      document.getElementById("question-box").textContent = `${currentIon.name} → ${currentIon.formula}`;
+      document.getElementById("question-box").innerHTML = `
+        <span id="question-text">${currentIon.name} → ${currentIon.formula}</span>
+        <button id="check-btn" onclick="markAsChecked(event)">☐</button>
+      `;
       showingAnswer = true;
     }
   }
 
-  // 初期表示
+  function markAsChecked(event) {
+    const btn = event.target;
+    btn.textContent = "✅";
+    btn.disabled = true;
+  }
+
   nextQuestion();
 </script>
 
